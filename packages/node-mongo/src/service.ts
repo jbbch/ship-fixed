@@ -452,7 +452,7 @@ class Service<T extends IDocument> {
       return [];
     }
 
-    const updated = await Promise.all(
+    let updated = await Promise.all(
       documents.map(async (doc: T) => {
         const prevDoc = cloneDeep(doc);
         const updatedFields = await updateFn(doc);
@@ -493,7 +493,7 @@ class Service<T extends IDocument> {
       : Boolean(this.options.schemaValidator);
 
     if (shouldValidateSchema) {
-      await Promise.all((updated.map((u) => this.validateSchema(u.doc))));
+      updated = await Promise.all((updated.map((u) => this.validateSchema(u.doc))));
     }
 
     const updatedDocuments = updated.filter((u) => u.isUpdated);
